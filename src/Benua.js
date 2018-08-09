@@ -9,7 +9,7 @@ import {
     Toast,
 } from 'native-base'
 import axios from 'axios';
-import { NavigationActions, createStackNavigator, DrawerActions } from 'react-navigation';
+
 
 export default class Home extends Component {
 
@@ -32,10 +32,11 @@ export default class Home extends Component {
     }
 
     retrieveList(isRefreshed) {
-        axios.get('http://localhost:8000/negara/page/0').then((response) => {
+        axios.get('http://localhost:8000/benua/').then((response) => {
             console.log(response)
-            this.setState({ data: response.data.data, totalPage: response.data.totalpage, isLoading: false });
+            this.setState({ data: response.data, totalPage: response.data.totalpage, isLoading: false });
         })
+       
 
         if (isRefreshed && this.setState({ isRefreshing: false }));
     }
@@ -48,7 +49,7 @@ export default class Home extends Component {
                 currentPage: page,
             });
 
-            axios.get('http://localhost:8000/negara/page/' + page)
+            axios.get('http://localhost:8000/benua/' + page)
                 .then(res => {
                     // console.log(res)
                     if (res.data.data.length > 1) {
@@ -56,7 +57,7 @@ export default class Home extends Component {
                             data: [...this.state.data, ...res.data.data],
                             isLoading: false
                         });
-                    }
+                    } 
                 }).catch(err => {
                     console.log('next page', err); // eslint-disable-line
                 });
@@ -77,12 +78,12 @@ export default class Home extends Component {
     //fungsi memanggil nama_negara dari axios yg akan di tampilkan ke flatlist
     _renderItem = ({ item }) => (
         <TouchableOpacity key={item._id} style={{ height: 50, padding: 16, justifyContent: 'center' }} onPress={() => {
-            this.props.navigation.navigate('Detail', { item, mode: 'Lihat', showMessage: this.showMessage })
+            this.props.navigation.navigate('DetailBenua', { item, mode: 'Lihat', showMessage: this.showMessage })
         }}>
-            <Text>{item.nama_negara}</Text>
-            {/* <Text>{item.nama_benua}</Text> */}
+            <Text>{item.nama_benua}</Text>
         </TouchableOpacity>
     );
+   
 
     _keyExtractor = (item, index) => item + index;
 
@@ -111,15 +112,7 @@ export default class Home extends Component {
             this.setState({ data: this.state.data.filter(e => e._id !== item._id) });
         }
     }
-    // navigateToScreen = (route) => () => {
-    //     const navigateAction = NavigationActions.navigate({
-    //         routeName: route
-    //     });
-    //     this.props.navigation.dispatch(navigateAction);
-    // }
-    // static navigationOptions = {
 
-    // }
 
     render() {
         return (
@@ -128,11 +121,11 @@ export default class Home extends Component {
                     <View style={{ flex: 1 }}>
                     </View>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Nama Negara</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Nama Benua</Text>
                     </View>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end' }}>
                         <TouchableOpacity style={{ padding: 10 }} onPress={() => {
-                            this.props.navigation.navigate('Detail', { mode: 'Buat', showMessage: this.showMessage })
+                            this.props.navigation.navigate('DetailBenua', { mode: 'Buat', showMessage: this.showMessage })
                         }}>
                             <Text>Tambah</Text>
                         </TouchableOpacity>

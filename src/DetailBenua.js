@@ -1,61 +1,28 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Container, Header, Content, Form, Item, Input, Toast } from 'native-base';
 import axios from 'axios'
 import Modal from "react-native-modal";
-import RNPickerSelect from 'react-native-picker-select';
 
 class DetailScreen extends Component {
     constructor(props) {
         super(props);
         console.log(props.navigation.state.params.item)
-        this.inputRefs = {};
         if (props.navigation.state.params.mode === 'Lihat') {
             this.state = {
-                field_nama_negara: props.navigation.state.params.item.nama_negara,
-                // field_nama_benua: props.navigation.state.params.item.nama_benua,
-                field_populasi: "" + props.navigation.state.params.item.populasi,
-                init_nama_negara: props.navigation.state.params.item.nama_negara,
-                init_populasi: "" + props.navigation.state.params.item.populasi,
+                field_nama_benua: props.navigation.state.params.item.nama_benua,
+                // field_populasi: "" + props.navigation.state.params.item.populasi,
+                init_nama_benua: props.navigation.state.params.item.nama_benua,
+                // init_populasi: "" + props.navigation.state.params.item.populasi,
                 mode: 'Lihat',
-                benua_id: undefined,
-                items: [
-                    // {
-                    //     label: 'Red',
-                    //     value: 'red',
-                    // },
-                    // {
-                    //     label: 'Orange',
-                    //     value: 'orange',
-                    // },
-                    // {
-                    //     label: 'Blue',
-                    //     value: 'blue',
-                    // },
-                ],
             }
         } else if (props.navigation.state.params.mode === 'Buat') {
             this.state = {
-                field_nama_negara: '',
-                field_populasi: '',
-                init_nama_negara: '',
-                init_populasi: '',
+                field_nama_benua: '',
+                // field_populasi: '',
+                init_nama_benua: '',
+                // init_populasi: '',
                 mode: 'Buat',
-                benua_id: undefined,
-                items: [
-                    // {
-                    //     label: 'Red',
-                    //     value: 'red',
-                    // },
-                    // {
-                    //     label: 'Orange',
-                    //     value: 'orange',
-                    // },
-                    // {
-                    //     label: 'Blue',
-                    //     value: 'blue',
-                    // },
-                ],
             }
         }
         this.tampilkanTombol = this.tampilkanTombol.bind(this);
@@ -66,15 +33,15 @@ class DetailScreen extends Component {
 
     buatBaru() {
         _self = this;
-        if (this.state.field_nama_negara === '' || this.state.field_populasi === '') {
+        if (this.state.field_nama_benua === '' || this.state.field_populasi === '') {
             Toast.show({
                 text: 'Error!',
                 buttonText: 'Okay'
             })
         } else {
-            axios.post('http://localhost:8000/negara/tambah', {
-                nama_negara: this.state.field_nama_negara,
-                populasi: this.state.field_populasi,
+            axios.post('http://localhost:8000/benua/tambah', {
+                nama_benua: this.state.field_nama_benua,
+                // populasi: this.state.field_populasi,
             }).then((response) => {
                 if (response.data.status_code === -1) {
                     Toast.show({
@@ -83,9 +50,9 @@ class DetailScreen extends Component {
                     })
                 } else {
                     _self.props.navigation.state.params.showMessage('Buat', response.data.msg, {
-                        _id: response.data.data._id,
-                        nama_negara: response.data.data.nama_negara,
-                        populasi: response.data.data.populasi
+                        _id: response.data._id,
+                        nama_benua: response.data.data.nama_benua,
+                        // populasi: response.data.data.populasi
                     });
                     _self.props.navigation.goBack();
                 }
@@ -101,10 +68,10 @@ class DetailScreen extends Component {
                 buttonText: 'Okay'
             })
         } else {
-            axios.post('http://localhost:8000/negara/ubah', {
+            axios.post('http://localhost:8000/benua/ubah', {
                 _id: this.props.navigation.state.params.item._id,
-                nama_negara: this.state.field_nama_negara,
-                populasi: this.state.field_populasi,
+                nama_benua: this.state.field_nama_benua,
+                // populasi: this.state.field_populasi,
             }).then((response) => {
                 if (response.data.status_code === -1) {
                     Toast.show({
@@ -114,8 +81,8 @@ class DetailScreen extends Component {
                 } else {
                     _self.props.navigation.state.params.showMessage('Ubah', response.data.msg, {
                         _id: _self.props.navigation.state.params.item._id,
-                        nama_negara: _self.state.field_nama_negara,
-                        populasi: _self.state.field_populasi
+                        nama_benua: _self.state.field_nama_benua,
+                        // populasi: _self.state.field_populasi
                     });
                     _self.props.navigation.goBack();
                 }
@@ -125,13 +92,13 @@ class DetailScreen extends Component {
 
     hapusData() {
         _self = this;
-        if (this.state.field_nama_negara === '' || this.state.field_populasi === '') {
+        if (this.state.field_nama_benua === '' ) {
             Toast.show({
                 text: 'Error!',
                 buttonText: 'Okay'
             })
         } else {
-            axios.post('http://localhost:8000/negara/hapus', {
+            axios.post('http://localhost:8000/benua/hapus', {
                 _id: this.props.navigation.state.params.item._id,
             }).then((response) => {
                 _self.setState({ isModalVisible: false });
@@ -173,7 +140,7 @@ class DetailScreen extends Component {
                         <Text style={{ color: 'white', fontWeight: 'bold' }}>Simpan</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ height: 50, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center' }} onPress={() => {
-                        this.setState({ field_nama_negara: this.state.init_nama_negara, field_populasi: this.state.init_populasi })
+                        this.setState({ field_nama_benua: this.state.init_nama_benua })
                     }}>
                         <Text style={{ color: 'white', fontWeight: 'bold' }}>Reset</Text>
                     </TouchableOpacity>
@@ -186,7 +153,7 @@ class DetailScreen extends Component {
                         <Text style={{ color: 'white', fontWeight: 'bold' }}>Simpan</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ height: 50, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }} onPress={() => {
-                        this.setState({ field_nama_negara: this.state.init_nama_negara, field_populasi: this.state.init_populasi })
+                        this.setState({ field_nama_benua: this.state.init_nama_benua })
                     }}>
                         <Text style={{ color: 'white', fontWeight: 'bold' }}>Reset</Text>
                     </TouchableOpacity>
@@ -222,13 +189,13 @@ class DetailScreen extends Component {
                     <Form>
                         <Item>
                             <Input
-                                placeholder="Nama Negara"
-                                onChangeText={(text) => this.setState({ field_nama_negara: text })}
-                                value={this.state.field_nama_negara}
+                                placeholder="Nama Benua"
+                                onChangeText={(text) => this.setState({ field_nama_benua: text })}
+                                value={this.state.field_nama_benua}
                                 editable={this.state.mode !== 'Lihat'}
                             />
                         </Item>
-                        <Item last>
+                        {/* <Item last>
                             <Input
                                 onChangeText={(text) => this.setState({ field_populasi: text })}
                                 value={this.state.field_populasi}
@@ -236,26 +203,7 @@ class DetailScreen extends Component {
                                 placeholder="Populasi"
                                 editable={this.state.mode !== 'Lihat'}
                             />
-                        </Item>
-                        <Item last>
-                            <RNPickerSelect
-                                placeholder={{
-                                    label: 'Pilih benua...',
-                                    value: null,
-                                }}
-                                items={this.state.items}
-                                onValueChange={(value) => {
-                                    this.setState({
-                                        benua_id: value,
-                                    });
-                                }}
-                                style={{ ...pickerSelectStyles }}
-                                value={this.state.benua_id}
-                                ref={(el) => {
-                                    this.inputRefs.picker = el;
-                                }}
-                            />
-                        </Item>
+                        </Item> */}
                     </Form>
                     {
                         this.tampilkanTombol()
@@ -326,18 +274,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center"
     }
-});
-
-const pickerSelectStyles = StyleSheet.create({
-    inputIOS: {
-        fontSize: 16,
-        paddingTop: 13,
-        paddingHorizontal: 10,
-        paddingBottom: 12,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 4,
-    },
 });
 
 export default DetailScreen;
